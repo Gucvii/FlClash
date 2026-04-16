@@ -3,7 +3,7 @@ name: build-fork
 on:
   push:
     tags:
-      - 'v*'
+      - 'fork/*'
   workflow_dispatch:
 
 jobs:
