@@ -41,6 +41,44 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
     _clearEffect(id);
   }
 
+  Future<void> _handleSyncScript(int id) async {
+    final script = await ref.read(scriptProvider(id).future);
+    if (script == null) return;
+
+    String? url = script.url;
+    if (url.isEmpty) {
+      url = await globalState.showCommonDialog<String>(
+        child: InputDialog(
+          title: appLocalizations.sync,
+          value: '',
+          labelText: appLocalizations.url,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return appLocalizations.emptyTip(appLocalizations.value);
+            }
+            if (!value.isUrl) {
+              return appLocalizations.urlTip(appLocalizations.value);
+            }
+            return null;
+          },
+        ),
+      );
+      if (url == null || url.isEmpty) return;
+    }
+
+    try {
+      final res = await request.getTextResponseForUrl(url);
+      final content = res.data ?? '';
+      if (content.isEmpty) return;
+      final newScript = await script.copyWith(url: url).save(content);
+      ref.read(scriptsProvider.notifier).put(newScript);
+    } catch (e) {
+      globalState.showMessage(
+        message: TextSpan(text: e.toString()),
+      );
+    }
+  }
+
   Future<void> _clearEffect(int id) async {
     final path = await appPath.getScriptPath(id.toString());
     await File(path).safeDelete();
@@ -88,11 +126,12 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
   Future<void> _handleEditorSave(
     BuildContext _,
     String title,
-    String content, {
+    String content,
+    String? url, {
     Script? script,
   }) async {
     Script newScript =
-        (script?.copyWith(label: title) ?? Script.create(label: title));
+        (script?.copyWith(label: title, url: url ?? script.url) ?? Script.create(label: title, url: url ?? ''));
     newScript = await newScript.save(content);
     if (newScript.label.isEmpty) {
       final res = await globalState.showCommonDialog<String>(
@@ -152,7 +191,7 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
       message: TextSpan(text: appLocalizations.saveChanges),
     );
     if (res == true && mounted) {
-      _handleEditorSave(context, title, content, script: script);
+      _handleEditorSave(context, title, content, null, script: script);
     } else {
       return true;
     }
@@ -172,8 +211,9 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
         titleEditable: true,
         title: title,
         supportRemoteDownload: true,
-        onSave: (context, title, content) {
-          _handleEditorSave(context, title, content, script: script);
+        sourceUrl: script?.url,
+        onSave: (context, title, content, url) {
+          _handleEditorSave(context, title, content, url, script: script);
         },
         onPop: (context, title, content) {
           return _handleEditorPop(context, title, content, raw, script: script);
@@ -200,6 +240,15 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
       child: CommonScaffold(
         actions: [
           if (selectedScriptId != null) ...[
+            CommonMinIconButtonTheme(
+              child: IconButton.filledTonal(
+                onPressed: () {
+                  _handleSyncScript(selectedScriptId);
+                },
+                icon: Icon(Icons.sync),
+              ),
+            ),
+            SizedBox(width: 2),
             CommonMinIconButtonTheme(
               child: IconButton.filledTonal(
                 onPressed: () {

@@ -505,15 +505,17 @@ abstract class Script with _$Script {
     required int id,
     required String label,
     required DateTime lastUpdateTime,
+    @Default('') String url,
   }) = _Script;
 
   factory Script.fromJson(Map<String, Object?> json) => _$ScriptFromJson(json);
 
-  factory Script.create({required String label}) {
+  factory Script.create({required String label, String url = ''}) {
     return Script(
       id: snowflake.id,
       label: label,
       lastUpdateTime: DateTime.now(),
+      url: url,
     );
   }
 }

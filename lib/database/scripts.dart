@@ -11,6 +11,8 @@ class Scripts extends Table {
 
   DateTimeColumn get lastUpdateTime => dateTime()();
 
+  TextColumn get url => text().withDefault(const Constant(''))();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -48,7 +50,12 @@ class ScriptsDao extends DatabaseAccessor<Database> with _$ScriptsDaoMixin {
 
 extension RawScriptExt on RawScript {
   Script toScript() {
-    return Script(id: id, label: label, lastUpdateTime: lastUpdateTime);
+    return Script(
+      id: id,
+      label: label,
+      lastUpdateTime: lastUpdateTime,
+      url: url,
+    );
   }
 }
 
@@ -58,6 +65,7 @@ extension ScriptsCompanionExt on Script {
       id: Value(id),
       label: label,
       lastUpdateTime: lastUpdateTime,
+      url: Value(url),
     );
   }
 }

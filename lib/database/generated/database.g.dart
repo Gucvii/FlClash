@@ -832,8 +832,18 @@ class $ScriptsTable extends Scripts with TableInfo<$ScriptsTable, RawScript> {
         type: DriftSqlType.dateTime,
         requiredDuringInsert: true,
       );
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
   @override
-  List<GeneratedColumn> get $columns => [id, label, lastUpdateTime];
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+    'url',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, label, lastUpdateTime, url];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -868,6 +878,12 @@ class $ScriptsTable extends Scripts with TableInfo<$ScriptsTable, RawScript> {
     } else if (isInserting) {
       context.missing(_lastUpdateTimeMeta);
     }
+    if (data.containsKey('url')) {
+      context.handle(
+        _urlMeta,
+        url.isAcceptableOrUnknown(data['url']!, _urlMeta),
+      );
+    }
     return context;
   }
 
@@ -889,6 +905,10 @@ class $ScriptsTable extends Scripts with TableInfo<$ScriptsTable, RawScript> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_update_time'],
       )!,
+      url: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}url'],
+      )!,
     );
   }
 
@@ -902,10 +922,12 @@ class RawScript extends DataClass implements Insertable<RawScript> {
   final int id;
   final String label;
   final DateTime lastUpdateTime;
+  final String url;
   const RawScript({
     required this.id,
     required this.label,
     required this.lastUpdateTime,
+    this.url = '',
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -913,6 +935,7 @@ class RawScript extends DataClass implements Insertable<RawScript> {
     map['id'] = Variable<int>(id);
     map['label'] = Variable<String>(label);
     map['last_update_time'] = Variable<DateTime>(lastUpdateTime);
+    map['url'] = Variable<String>(url);
     return map;
   }
 
@@ -921,6 +944,7 @@ class RawScript extends DataClass implements Insertable<RawScript> {
       id: Value(id),
       label: Value(label),
       lastUpdateTime: Value(lastUpdateTime),
+      url: Value(url),
     );
   }
 
@@ -933,6 +957,7 @@ class RawScript extends DataClass implements Insertable<RawScript> {
       id: serializer.fromJson<int>(json['id']),
       label: serializer.fromJson<String>(json['label']),
       lastUpdateTime: serializer.fromJson<DateTime>(json['lastUpdateTime']),
+      url: serializer.fromJson<String>(json['url'] ?? ''),
     );
   }
   @override
@@ -942,14 +967,16 @@ class RawScript extends DataClass implements Insertable<RawScript> {
       'id': serializer.toJson<int>(id),
       'label': serializer.toJson<String>(label),
       'lastUpdateTime': serializer.toJson<DateTime>(lastUpdateTime),
+      'url': serializer.toJson<String>(url),
     };
   }
 
-  RawScript copyWith({int? id, String? label, DateTime? lastUpdateTime}) =>
+  RawScript copyWith({int? id, String? label, DateTime? lastUpdateTime, String? url}) =>
       RawScript(
         id: id ?? this.id,
         label: label ?? this.label,
         lastUpdateTime: lastUpdateTime ?? this.lastUpdateTime,
+        url: url ?? this.url,
       );
   RawScript copyWithCompanion(ScriptsCompanion data) {
     return RawScript(
@@ -958,6 +985,7 @@ class RawScript extends DataClass implements Insertable<RawScript> {
       lastUpdateTime: data.lastUpdateTime.present
           ? data.lastUpdateTime.value
           : this.lastUpdateTime,
+      url: data.url.present ? data.url.value : this.url,
     );
   }
 
@@ -966,46 +994,53 @@ class RawScript extends DataClass implements Insertable<RawScript> {
     return (StringBuffer('RawScript(')
           ..write('id: $id, ')
           ..write('label: $label, ')
-          ..write('lastUpdateTime: $lastUpdateTime')
+          ..write('lastUpdateTime: $lastUpdateTime, ')
+          ..write('url: $url')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, label, lastUpdateTime);
+  int get hashCode => Object.hash(id, label, lastUpdateTime, url);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is RawScript &&
           other.id == this.id &&
           other.label == this.label &&
-          other.lastUpdateTime == this.lastUpdateTime);
+          other.lastUpdateTime == this.lastUpdateTime &&
+          other.url == this.url);
 }
 
 class ScriptsCompanion extends UpdateCompanion<RawScript> {
   final Value<int> id;
   final Value<String> label;
   final Value<DateTime> lastUpdateTime;
+  final Value<String> url;
   const ScriptsCompanion({
     this.id = const Value.absent(),
     this.label = const Value.absent(),
     this.lastUpdateTime = const Value.absent(),
+    this.url = const Value.absent(),
   });
   ScriptsCompanion.insert({
     this.id = const Value.absent(),
     required String label,
     required DateTime lastUpdateTime,
+    this.url = const Value.absent(),
   }) : label = Value(label),
        lastUpdateTime = Value(lastUpdateTime);
   static Insertable<RawScript> custom({
     Expression<int>? id,
     Expression<String>? label,
     Expression<DateTime>? lastUpdateTime,
+    Expression<String>? url,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (label != null) 'label': label,
       if (lastUpdateTime != null) 'last_update_time': lastUpdateTime,
+      if (url != null) 'url': url,
     });
   }
 
@@ -1013,11 +1048,13 @@ class ScriptsCompanion extends UpdateCompanion<RawScript> {
     Value<int>? id,
     Value<String>? label,
     Value<DateTime>? lastUpdateTime,
+    Value<String>? url,
   }) {
     return ScriptsCompanion(
       id: id ?? this.id,
       label: label ?? this.label,
       lastUpdateTime: lastUpdateTime ?? this.lastUpdateTime,
+      url: url ?? this.url,
     );
   }
 
@@ -1033,6 +1070,9 @@ class ScriptsCompanion extends UpdateCompanion<RawScript> {
     if (lastUpdateTime.present) {
       map['last_update_time'] = Variable<DateTime>(lastUpdateTime.value);
     }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
     return map;
   }
 
@@ -1041,7 +1081,8 @@ class ScriptsCompanion extends UpdateCompanion<RawScript> {
     return (StringBuffer('ScriptsCompanion(')
           ..write('id: $id, ')
           ..write('label: $label, ')
-          ..write('lastUpdateTime: $lastUpdateTime')
+          ..write('lastUpdateTime: $lastUpdateTime, ')
+          ..write('url: $url')
           ..write(')'))
         .toString();
   }
@@ -2157,6 +2198,11 @@ class $$ScriptsTableFilterComposer extends Composer<_$Database, $ScriptsTable> {
     column: $table.lastUpdateTime,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$ScriptsTableOrderingComposer
@@ -2182,6 +2228,11 @@ class $$ScriptsTableOrderingComposer
     column: $table.lastUpdateTime,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get url => $composableBuilder(
+    column: $table.url,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ScriptsTableAnnotationComposer
@@ -2203,6 +2254,9 @@ class $$ScriptsTableAnnotationComposer
     column: $table.lastUpdateTime,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get url =>
+      $composableBuilder(column: $table.url, builder: (column) => column);
 }
 
 class $$ScriptsTableTableManager
@@ -2246,10 +2300,12 @@ class $$ScriptsTableTableManager
                 Value<int> id = const Value.absent(),
                 required String label,
                 required DateTime lastUpdateTime,
+                Value<String> url = const Value.absent(),
               }) => ScriptsCompanion.insert(
                 id: id,
                 label: label,
                 lastUpdateTime: lastUpdateTime,
+                url: url,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

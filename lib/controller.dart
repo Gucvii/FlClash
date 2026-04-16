@@ -326,12 +326,46 @@ extension ProfilesControllerExt on AppController {
       }
       final newProfile = await profile.update();
       _ref.read(profilesProvider.notifier).put(newProfile);
+
+      // Sync linked script if profile uses script overwrite and has a remote URL
+      if (newProfile.overwriteType == OverwriteType.script &&
+          newProfile.scriptId != null) {
+        await _syncLinkedScript(newProfile.scriptId!);
+      }
+
       if (profile.id == _ref.read(currentProfileIdProvider)) {
         applyProfileDebounce(silence: true);
       }
     } finally {
       _ref.read(isUpdatingProvider(profile.updatingKey).notifier).value = false;
     }
+  }
+
+  final Set<int> _syncingScriptIds = {};
+
+  Future<void> _syncLinkedScript(int scriptId) async {
+    if (!_syncingScriptIds.add(scriptId)) return;
+    try {
+      final script = await _ref.read(scriptProvider(scriptId).future);
+      if (script == null || script.url.isEmpty) return;
+      await updateScript(script);
+    } catch (e) {
+      commonPrint.log(
+        'Failed to sync linked script: ${e.toString()}',
+        logLevel: LogLevel.warning,
+      );
+    } finally {
+      _syncingScriptIds.remove(scriptId);
+    }
+  }
+
+  Future<void> updateScript(Script script) async {
+    if (script.url.isEmpty) return;
+    final res = await request.getTextResponseForUrl(script.url);
+    final content = res.data ?? '';
+    if (content.isEmpty) return;
+    final newScript = await script.save(content);
+    _ref.read(scriptsProvider.notifier).put(newScript);
   }
 
   Future<void> addProfileFormURL(String url) async {

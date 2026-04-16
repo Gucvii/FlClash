@@ -24,7 +24,8 @@ class EditorPage extends ConsumerStatefulWidget {
   final List<Language> languages;
   final bool supportRemoteDownload;
   final bool titleEditable;
-  final Function(BuildContext context, String title, String content)? onSave;
+  final String? sourceUrl;
+  final Function(BuildContext context, String title, String content, String? url)? onSave;
   final Future<bool> Function(
     BuildContext context,
     String title,
@@ -40,6 +41,7 @@ class EditorPage extends ConsumerStatefulWidget {
     this.onSave,
     this.onPop,
     this.supportRemoteDownload = false,
+    this.sourceUrl,
     this.languages = const [Language.yaml],
   });
 
@@ -54,6 +56,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   late FocusNode _focusNode;
   late bool readOnly = false;
   late final SelectionToolbarController _toolbarController;
+  late String? _sourceUrl;
 
   @override
   void initState() {
@@ -64,6 +67,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     _controller = CodeLineEditingController.fromText(widget.content);
     _findController = CodeFindController(_controller);
     _titleController = TextEditingController(text: widget.title);
+    _sourceUrl = widget.sourceUrl;
     if (system.isDesktop) {
       return;
     }
@@ -135,7 +139,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     final url = await globalState.showCommonDialog(
       child: InputDialog(
         title: appLocalizations.import,
-        value: '',
+        value: _sourceUrl ?? '',
         labelText: appLocalizations.url,
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -151,6 +155,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     if (url == null) {
       return;
     }
+    _sourceUrl = url;
     final res = await request.getTextResponseForUrl(url);
     _controller.text = res.data ?? '';
   }
@@ -200,6 +205,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                               context,
                               _titleController.text,
                               _controller.text,
+                              _sourceUrl,
                             );
                           }
                         : null,
