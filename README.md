@@ -1,127 +1,22 @@
-<div>
+# FlClash (Fork)
 
-[**简体中文**](README_zh_CN.md)
+This is a personal fork of [chen08209/FlClash](https://github.com/chen08209/FlClash), a multi-platform proxy client based on ClashMeta.
 
-</div>
+## Added Features
 
-## FlClash
+### Override Script Sync
 
-[![Downloads](https://img.shields.io/github/downloads/chen08209/FlClash/total?style=flat-square&logo=github)](https://github.com/chen08209/FlClash/releases/)[![Last Version](https://img.shields.io/github/release/chen08209/FlClash/all.svg?style=flat-square)](https://github.com/chen08209/FlClash/releases/)[![License](https://img.shields.io/github/license/chen08209/FlClash?style=flat-square)](LICENSE)
+- **Remote URL binding per script** — each script can be associated with a remote URL (e.g. GitHub Gist). The URL is stored persistently so you never have to re-enter it.
+- **Import from URL** — in the script editor, tap the three-dot menu → *External Fetch* → *Import from URL*. The dialog remembers the last URL used for that script.
+- **Sync button in script list** — a sync button is always visible in the top-right area of the script list:
+  - When no script is selected: syncs all scripts that have a remote URL.
+  - When a script is selected: syncs only that script.
+- **Last-sync time display** — each script item shows how long ago it was last synced (e.g. *Just now*, *5 minutes ago*, *2 days ago*). Scripts without a remote URL show *Local*.
+- **Auto-sync on profile update** — when a profile is refreshed, any linked override script that has a remote URL is automatically synced as well.
+- **Sync time in overwrite selector** — the script selector inside the profile override settings also shows the last-sync time for each script entry.
 
-[![Channel](https://img.shields.io/badge/Telegram-Channel-blue?style=flat-square&logo=telegram)](https://t.me/FlClash)
+## Release
 
-A multi-platform proxy client based on ClashMeta, simple and easy to use, open-source and ad-free.
+Android APKs are built and published automatically when a `v*` tag is pushed to this repository.
 
-on Desktop:
-<p style="text-align: center;">
-    <img alt="desktop" src="snapshots/desktop.gif">
-</p>
-
-on Mobile:
-<p style="text-align: center;">
-    <img alt="mobile" src="snapshots/mobile.gif">
-</p>
-
-## Features
-
-✈️ Multi-platform: Android, Windows, macOS and Linux
-
-💻 Adaptive multiple screen sizes, Multiple color themes available
-
-💡 Based on Material You Design, [Surfboard](https://github.com/getsurfboard/surfboard)-like UI
-
-☁️ Supports data sync via WebDAV
-
-✨ Support subscription link, Dark mode
-
-## Use
-
-### Linux
-
-⚠️ Make sure to install the following dependencies before using them
-
-   ```bash
-    sudo apt-get install libayatana-appindicator3-dev
-    sudo apt-get install libkeybinder-3.0-dev
-   ```
-
-### Android
-
-Support the following actions
-
-   ```bash
-    com.follow.clash.action.START
-    
-    com.follow.clash.action.STOP
-    
-    com.follow.clash.action.TOGGLE
-   ```
-
-## Download
-
-<a href="https://chen08209.github.io/FlClash-fdroid-repo/repo?fingerprint=789D6D32668712EF7672F9E58DEEB15FBD6DCEEC5AE7A4371EA72F2AAE8A12FD"><img alt="Get it on F-Droid" src="snapshots/get-it-on-fdroid.svg" width="200px"/></a> <a href="https://github.com/chen08209/FlClash/releases"><img alt="Get it on GitHub" src="snapshots/get-it-on-github.svg" width="200px"/></a>
-
-## Build
-
-1. Update submodules
-   ```bash
-   git submodule update --init --recursive
-   ```
-
-2. Install `Flutter` and `Golang` environment
-
-3. Build Application
-
-    - android
-
-        1. Install  `Android SDK` ,  `Android NDK`
-
-        2. Set `ANDROID_NDK` environment variables
-
-        3. Run Build script
-
-           ```bash
-           dart .\setup.dart android
-           ```
-
-    - windows
-
-        1. You need a windows client
-
-        2. Install  `Gcc`，`Inno Setup`
-
-        3. Run build script
-
-           ```bash
-           dart .\setup.dart windows --arch <arm64 | amd64>
-           ```
-
-    - linux
-
-        1. You need a linux client
-
-        2. Run build script
-
-           ```bash
-           dart .\setup.dart linux --arch <arm64 | amd64>
-           ```
-
-    - macOS
-
-        1. You need a macOS client
-
-        2. Run build script
-
-           ```bash
-           dart .\setup.dart macos --arch <arm64 | amd64>
-           ```
-
-## Star
-
-The easiest way to support developers is to click on the star (⭐) at the top of the page.
-
-<p style="text-align: center;">
-    <a href="https://api.star-history.com/svg?repos=chen08209/FlClash&Date">
-        <img alt="start" width=50% src="https://api.star-history.com/svg?repos=chen08209/FlClash&Date"/>
-    </a>
-</p>
+> Upstream project: <https://github.com/chen08209/FlClash>

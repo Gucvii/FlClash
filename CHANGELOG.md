@@ -1,3 +1,18 @@
+## v0.8.93
+
+### Added
+- **Script remote URL persistence** — each override script can now store a remote URL that survives restarts.
+- **Import from URL with memory** — the *External Fetch → Import from URL* dialog pre-fills the last URL used for that script.
+- **Script list sync button** — always visible in the toolbar; syncs all remote scripts when nothing is selected, syncs the selected script otherwise.
+- **Last-sync time on script items** — script list and profile overwrite selector both display a relative time label (*Just now / N minutes ago / Local*).
+- **Auto-sync linked script on profile update** — refreshing a profile now also fetches the latest content of its linked override script if a remote URL is set.
+
+### Changed
+- CI/CD simplified to a single Android-only workflow triggered by `v*` tags.
+- Script list toolbar redesigned: delete button appears only when a script is selected.
+
+---
+
 ## v0.8.92
 
 - Add sqlite store
