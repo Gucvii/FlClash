@@ -139,7 +139,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     final editorPage = EditorPage(
       title: title,
       content: _rawText!,
-      onSave: (context, _, content) {
+      onSave: (context, _, content, __) {
         _handleSaveEdit(context, content);
       },
       onPop: (context, _, content) async {

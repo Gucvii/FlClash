@@ -20,6 +20,7 @@ class AppController {
   late final BuildContext _context;
   late final WidgetRef _ref;
   bool isAttach = false;
+  final Set<int> _syncingScriptIds = {};
 
   static AppController? _instance;
 
@@ -340,8 +341,6 @@ extension ProfilesControllerExt on AppController {
       _ref.read(isUpdatingProvider(profile.updatingKey).notifier).value = false;
     }
   }
-
-  final Set<int> _syncingScriptIds = {};
 
   Future<void> _syncLinkedScript(int scriptId) async {
     if (!_syncingScriptIds.add(scriptId)) return;

@@ -2358,8 +2358,7 @@ class _$FileInfoCopyWithImpl<$Res>
   return _then(_self.copyWith(
 size: null == size ? _self.size : size // ignore: cast_nullable_to_non_nullable
 as int,lastModified: null == lastModified ? _self.lastModified : lastModified // ignore: cast_nullable_to_non_nullable
-as DateTime,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String,
+as DateTime,
   ));
 }
 
@@ -2557,8 +2556,7 @@ class __$FileInfoCopyWithImpl<$Res>
   return _then(_FileInfo(
 size: null == size ? _self.size : size // ignore: cast_nullable_to_non_nullable
 as int,lastModified: null == lastModified ? _self.lastModified : lastModified // ignore: cast_nullable_to_non_nullable
-as DateTime,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String,
+as DateTime,
   ));
 }
 
