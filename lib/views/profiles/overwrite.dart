@@ -371,6 +371,13 @@ class _ScriptContent extends ConsumerWidget {
     });
   }
 
+  String _getSyncTimeDesc(Script script) {
+    if (script.url.isEmpty) {
+      return appLocalizations.local;
+    }
+    return script.lastUpdateTime.lastUpdateTimeDesc;
+  }
+
   @override
   Widget build(BuildContext context, ref) {
     final scriptId = ref.watch(
@@ -427,7 +434,14 @@ class _ScriptContent extends ConsumerWidget {
                               ),
                             ),
                             SizedBox(width: 8),
-                            Flexible(child: Text(script.label)),
+                            Expanded(child: Text(script.label)),
+                            SizedBox(width: 8),
+                            Text(
+                              _getSyncTimeDesc(script),
+                              style: context.textTheme.labelMedium?.copyWith(
+                                color: context.colorScheme.onSurfaceVariant.opacity80,
+                              ),
+                            ),
                           ],
                         ),
                         onTap: () {
