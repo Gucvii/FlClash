@@ -45,37 +45,65 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
     final script = await ref.read(scriptProvider(id).future);
     if (script == null) return;
 
-    String? url = script.url;
-    if (url.isEmpty) {
-      url = await globalState.showCommonDialog<String>(
-        child: InputDialog(
-          title: appLocalizations.sync,
-          value: '',
-          labelText: appLocalizations.url,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return appLocalizations.emptyTip(appLocalizations.value);
-            }
-            if (!value.isUrl) {
-              return appLocalizations.urlTip(appLocalizations.value);
-            }
-            return null;
-          },
-        ),
+    if (script.url.isEmpty) {
+      globalState.showMessage(
+        message: TextSpan(text: appLocalizations.scriptNoUrl),
       );
-      if (url == null || url.isEmpty) return;
+      return;
     }
 
     try {
-      final res = await request.getTextResponseForUrl(url);
+      final res = await request.getTextResponseForUrl(script.url);
       final content = res.data ?? '';
       if (content.isEmpty) return;
-      final newScript = await script.copyWith(url: url).save(content);
+      final newScript = await script.save(content);
       ref.read(scriptsProvider.notifier).put(newScript);
+      if (mounted) {
+        context.showNotifier(appLocalizations.syncSuccess);
+      }
     } catch (e) {
       globalState.showMessage(
         message: TextSpan(text: e.toString()),
       );
+    }
+  }
+
+  Future<void> _handleSyncAllScripts(List<Script> scripts) async {
+    final remoteScripts = scripts.where((s) => s.url.isNotEmpty).toList();
+    if (remoteScripts.isEmpty) {
+      globalState.showMessage(
+        message: TextSpan(text: appLocalizations.noRemoteScripts),
+      );
+      return;
+    }
+
+    int successCount = 0;
+    int failCount = 0;
+
+    for (final script in remoteScripts) {
+      try {
+        final res = await request.getTextResponseForUrl(script.url);
+        final content = res.data ?? '';
+        if (content.isNotEmpty) {
+          final newScript = await script.save(content);
+          ref.read(scriptsProvider.notifier).put(newScript);
+          successCount++;
+        }
+      } catch (e) {
+        failCount++;
+      }
+    }
+
+    if (mounted) {
+      if (failCount == 0) {
+        context.showNotifier(appLocalizations.syncSuccess);
+      } else {
+        globalState.showMessage(
+          message: TextSpan(
+            text: appLocalizations.syncResult(successCount, failCount),
+          ),
+        );
+      }
     }
   }
 
@@ -93,6 +121,13 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
     });
   }
 
+  String _getSyncTimeDesc(Script script) {
+    if (script.url.isEmpty) {
+      return appLocalizations.local;
+    }
+    return script.lastUpdateTime.lastUpdateTimeDesc;
+  }
+
   Widget _buildContent(List<Script> scripts, int? selectedScriptId) {
     if (scripts.isEmpty) {
       return NullStatus(
@@ -105,12 +140,24 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
       itemCount: scripts.length,
       itemBuilder: (_, index) {
         final script = scripts[index];
+        final isSelected = selectedScriptId == script.id;
         return CommonSelectedListItem(
-          isSelected: selectedScriptId == script.id,
-          title: Text(
-            script.label,
-            style: context.textTheme.bodyLarge,
-            maxLines: 3,
+          isSelected: isSelected,
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  script.label,
+                  style: context.textTheme.bodyLarge,
+                  maxLines: 3,
+                ),
+              ),
+              SizedBox(width: 8),
+              Text(
+                _getSyncTimeDesc(script),
+                style: context.textTheme.labelMedium?.toLight,
+              ),
+            ],
           ),
           onSelected: () {
             _handleSelected(script.id);
@@ -239,16 +286,18 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
       },
       child: CommonScaffold(
         actions: [
-          if (selectedScriptId != null) ...[
-            CommonMinIconButtonTheme(
-              child: IconButton.filledTonal(
-                onPressed: () {
-                  _handleSyncScript(selectedScriptId);
-                },
-                icon: Icon(Icons.sync),
-              ),
+          // Sync button - always visible
+          CommonMinIconButtonTheme(
+            child: IconButton.filledTonal(
+              onPressed: selectedScriptId != null
+                  ? () => _handleSyncScript(selectedScriptId)
+                  : () => _handleSyncAllScripts(scripts),
+              icon: Icon(Icons.sync),
             ),
-            SizedBox(width: 2),
+          ),
+          SizedBox(width: 2),
+          // Delete button - only when selected
+          if (selectedScriptId != null) ...[
             CommonMinIconButtonTheme(
               child: IconButton.filledTonal(
                 onPressed: () {
@@ -259,6 +308,7 @@ class _ScriptsViewState extends ConsumerState<ScriptsView> {
             ),
             SizedBox(width: 2),
           ],
+          // Edit/Add button
           CommonMinFilledButtonTheme(
             child: selectedScriptId != null
                 ? FilledButton(

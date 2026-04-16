@@ -50,6 +50,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m14(count) => "${count} 年前";
 
+  static String m15(success, failed) => "同步成功 ${success} 个脚本，失败 ${failed} 个";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about": MessageLookupByLibrary.simpleMessage("关于"),
@@ -354,6 +356,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noNetworkApp": MessageLookupByLibrary.simpleMessage("无网络应用"),
     "noProxy": MessageLookupByLibrary.simpleMessage("暂无代理"),
     "noProxyDesc": MessageLookupByLibrary.simpleMessage("请创建配置文件或者添加有效配置文件"),
+    "noRemoteScripts": MessageLookupByLibrary.simpleMessage("没有远程脚本可同步"),
     "noResolve": MessageLookupByLibrary.simpleMessage("不解析IP"),
     "none": MessageLookupByLibrary.simpleMessage("无"),
     "notSelectedTip": MessageLookupByLibrary.simpleMessage("当前代理组无法选中"),
@@ -492,6 +495,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "scriptModeDesc": MessageLookupByLibrary.simpleMessage(
       "脚本模式，使用外部扩展脚本，提供一键覆写配置的能力",
     ),
+    "scriptNoUrl": MessageLookupByLibrary.simpleMessage("脚本没有远程URL"),
     "search": MessageLookupByLibrary.simpleMessage("搜索"),
     "seconds": MessageLookupByLibrary.simpleMessage("秒"),
     "selectAll": MessageLookupByLibrary.simpleMessage("全选"),
@@ -525,6 +529,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "subRule": MessageLookupByLibrary.simpleMessage("子规则"),
     "submit": MessageLookupByLibrary.simpleMessage("提交"),
     "sync": MessageLookupByLibrary.simpleMessage("同步"),
+    "syncResult": m15,
+    "syncSuccess": MessageLookupByLibrary.simpleMessage("同步成功"),
     "system": MessageLookupByLibrary.simpleMessage("系统"),
     "systemApp": MessageLookupByLibrary.simpleMessage("系统应用"),
     "systemFont": MessageLookupByLibrary.simpleMessage("系统字体"),

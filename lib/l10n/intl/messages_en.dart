@@ -57,6 +57,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m14(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
+  static String m15(success, failed) =>
+      "Synced ${success} scripts, ${failed} failed";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about": MessageLookupByLibrary.simpleMessage("About"),
@@ -529,6 +532,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noProxyDesc": MessageLookupByLibrary.simpleMessage(
       "Please create a profile or add a valid profile",
     ),
+    "noRemoteScripts": MessageLookupByLibrary.simpleMessage(
+      "No remote scripts to sync",
+    ),
     "noResolve": MessageLookupByLibrary.simpleMessage("No resolve IP"),
     "none": MessageLookupByLibrary.simpleMessage("none"),
     "notSelectedTip": MessageLookupByLibrary.simpleMessage(
@@ -737,6 +743,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "scriptModeDesc": MessageLookupByLibrary.simpleMessage(
       "Script mode, use external extension scripts, provide one-click override configuration capability",
     ),
+    "scriptNoUrl": MessageLookupByLibrary.simpleMessage(
+      "Script has no remote URL",
+    ),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
     "seconds": MessageLookupByLibrary.simpleMessage("Seconds"),
     "selectAll": MessageLookupByLibrary.simpleMessage("Select all"),
@@ -774,6 +783,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "subRule": MessageLookupByLibrary.simpleMessage("Sub rule"),
     "submit": MessageLookupByLibrary.simpleMessage("Submit"),
     "sync": MessageLookupByLibrary.simpleMessage("Sync"),
+    "syncResult": m15,
+    "syncSuccess": MessageLookupByLibrary.simpleMessage("Sync success"),
     "system": MessageLookupByLibrary.simpleMessage("System"),
     "systemApp": MessageLookupByLibrary.simpleMessage("System APP"),
     "systemFont": MessageLookupByLibrary.simpleMessage("System font"),

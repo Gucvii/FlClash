@@ -3748,6 +3748,31 @@ class AppLocalizations {
   String get delayTest {
     return Intl.message('Delay Test', name: 'delayTest', desc: '', args: []);
   }
+
+  /// `Script has no remote URL`
+  String get scriptNoUrl {
+    return Intl.message('Script has no remote URL', name: 'scriptNoUrl', desc: '', args: []);
+  }
+
+  /// `No remote scripts to sync`
+  String get noRemoteScripts {
+    return Intl.message('No remote scripts to sync', name: 'noRemoteScripts', desc: '', args: []);
+  }
+
+  /// `Sync success`
+  String get syncSuccess {
+    return Intl.message('Sync success', name: 'syncSuccess', desc: '', args: []);
+  }
+
+  /// `Synced {success} scripts, {failed} failed`
+  String syncResult(Object success, Object failed) {
+    return Intl.message(
+      'Synced $success scripts, $failed failed',
+      name: 'syncResult',
+      desc: '',
+      args: [success, failed],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
